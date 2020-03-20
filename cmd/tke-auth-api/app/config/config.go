@@ -307,6 +307,7 @@ func setupCasbinEnforcer(authorizationOptions *options.AuthorizationOptions) (*c
 		if err != nil {
 			return nil, err
 		}
+
 	} else {
 		enforcer, err = casbin.NewSyncedEnforcer(authorizationOptions.CasbinModelFile)
 		if err != nil {
