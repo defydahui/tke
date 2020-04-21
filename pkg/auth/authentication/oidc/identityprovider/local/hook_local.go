@@ -65,7 +65,7 @@ func (d *localHookHandler) PostStartHook() (string, genericapiserver.PostStartHo
 		}
 
 		for _, conn := range conns.Items {
-			idp, err := NewDefaultIdentityProvider(conn.Name, conn.Spec.Administrators, d.versionedInformers)
+			idp, err := NewDefaultIdentityProvider(conn.Name, conn.Spec.Administrators, d.authClient, d.versionedInformers)
 			if err != nil {
 				log.Error("NewDefaultIdentityProvider failed", log.String("idp", conn.Spec.Name), log.Err(err))
 				continue

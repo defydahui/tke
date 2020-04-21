@@ -94,6 +94,7 @@ func (r *REST) Get(ctx context.Context, name string, options *metav1.GetOptions)
 		tenantID, name = util.ParseTenantAndName(name)
 	}
 
+	log.Info("group", log.String("tenant", tenantID), log.String("name", name))
 	idp, ok := identityprovider.IdentityProvidersStore[tenantID]
 	if !ok {
 		log.Error("Tenant has no related identity providers", log.String("tenantID", tenantID))

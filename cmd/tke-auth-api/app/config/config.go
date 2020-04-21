@@ -171,7 +171,7 @@ func CreateConfigFromOptions(serverName string, opts *options.Options) (*Config,
 	log.Info("init tenant type", log.String("type", opts.Auth.InitTenantType))
 	switch opts.Auth.InitTenantType {
 	case local.ConnectorType:
-		err = setupDefaultConnector(versionedInformers, opts.Auth)
+		err = setupDefaultConnector(authClient, versionedInformers, opts.Auth)
 		if err != nil {
 			return nil, err
 		}
@@ -325,10 +325,10 @@ func setupCasbinEnforcer(authorizationOptions *options.AuthorizationOptions) (*c
 	return enforcer, nil
 }
 
-func setupDefaultConnector(versionInformers versionedinformers.SharedInformerFactory, auth *options.AuthOptions) error {
+func setupDefaultConnector(authClient authinternalclient.AuthInterface, versionInformers versionedinformers.SharedInformerFactory, auth *options.AuthOptions) error {
 	log.Info("setup tke local connector", log.Any("tenantID", auth.InitTenantID))
 	if _, ok := identityprovider.IdentityProvidersStore[auth.InitTenantID]; !ok {
-		defaultIDP, err := local.NewDefaultIdentityProvider(auth.InitTenantID, auth.InitIDPAdmins, versionInformers)
+		defaultIDP, err := local.NewDefaultIdentityProvider(auth.InitTenantID, auth.InitIDPAdmins, authClient, versionInformers)
 		if err != nil {
 			return nil
 		}
@@ -420,7 +420,6 @@ func keyMatchCustomFunction(key1 string, key2 string) bool {
 		}
 
 		key2 = re.ReplaceAllString(key2, "$1[^/]+$2")
-		fmt.Printf("%d %s\n", i, key2)
 		i = i + 1
 	}
 
