@@ -882,6 +882,7 @@ func (in *ProjectStatus) DeepCopyInto(out *ProjectStatus) {
 		*out = new(string)
 		**out = **in
 	}
+	in.LastTransitionTime.DeepCopyInto(&out.LastTransitionTime)
 	return
 }
 
