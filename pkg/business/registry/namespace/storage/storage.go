@@ -357,6 +357,7 @@ func (r *REST) patchNamespace(obj runtime.Object, cache map[string]*platformv1.C
 			cache[ns.Spec.ClusterName] = cls
 		}
 	}
+	ns.Spec.ClusterType = cls.Spec.Type
 	ns.Spec.ClusterVersion = cls.Status.Version
 	ns.Spec.ClusterDisplayName = cls.Spec.DisplayName
 	return nil
