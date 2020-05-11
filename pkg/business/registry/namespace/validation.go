@@ -88,8 +88,10 @@ func ValidateNamespace(namespace *business.Namespace, old *business.Namespace,
 	objectGetter validation.BusinessObjectGetter, clusterGetter validation.ClusterGetter) field.ErrorList {
 	allErrs := apimachineryvalidation.ValidateObjectMeta(&namespace.ObjectMeta,
 		true, ValidateNamespaceName, field.NewPath("metadata"))
-	allErrs = append(allErrs,
-		validation.ValidateClusterVersioned(clusterGetter, namespace.Spec.ClusterName, namespace.Spec.TenantID)...)
+	if old == nil { // Only validate cluster when creating namespaces.
+		allErrs = append(allErrs,
+			validation.ValidateClusterVersioned(clusterGetter, namespace.Spec.ClusterName, namespace.Spec.TenantID)...)
+	}
 
 	fldSpecPath := field.NewPath("spec")
 

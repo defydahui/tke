@@ -102,12 +102,3 @@ func ValidateClusterVersioned(getter ClusterGetter, clusterName string, tenantID
 	}
 	return allErrs
 }
-
-// ValidateUpdateCluster validate cluster
-func ValidateUpdateCluster(newClusterName, oldClusterName string) field.ErrorList {
-	var allErrs field.ErrorList
-	if newClusterName != oldClusterName {
-		allErrs = append(allErrs, field.Invalid(field.NewPath("spec", "clusterName"), newClusterName, "cluster name can't modify"))
-	}
-	return allErrs
-}

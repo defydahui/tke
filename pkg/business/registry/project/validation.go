@@ -58,7 +58,9 @@ func ValidateProject(project *business.Project, old *business.Project,
 	if len(project.Spec.Clusters) > 0 {
 		for clusterName, clusterHard := range project.Spec.Clusters {
 			for k, v := range clusterHard.Hard {
-				hardErrs = append(hardErrs, validation.ValidateClusterVersioned(clusterGetter, clusterName, project.Spec.TenantID)...)
+				if old == nil { // Only validate cluster when creating projects.
+					hardErrs = append(hardErrs, validation.ValidateClusterVersioned(clusterGetter, clusterName, project.Spec.TenantID)...)
+				}
 				resPath := fldHardPath.Key(clusterName + k)
 				hardErrs = append(hardErrs, resource.ValidateResourceQuotaResourceName(k, resPath)...)
 				hardErrs = append(hardErrs, resource.ValidateResourceQuantityValue(k, v, resPath)...)
@@ -124,8 +126,10 @@ func validateAgainstChildren(project *business.Project, getter validation.Busine
 	for _, name := range project.Status.CalculatedChildProjects {
 		childProject, err := getter.Project(name, metav1.GetOptions{})
 		if err != nil {
-			allErrs = append(allErrs, field.Invalid(fldChildrenProjectsPath, name,
-				fmt.Sprintf("failed to get child project '%s', for %s", name, err)))
+			if !errors.IsNotFound(err) {
+				allErrs = append(allErrs, field.Invalid(fldChildrenProjectsPath, name,
+					fmt.Sprintf("failed to get child project '%s', for %s", name, err)))
+			}
 			continue
 		}
 
@@ -145,8 +149,10 @@ func validateAgainstChildren(project *business.Project, getter validation.Busine
 	for _, name := range project.Status.CalculatedNamespaces {
 		childNamespace, err := getter.Namespace(project.Name, name, metav1.GetOptions{})
 		if err != nil {
-			allErrs = append(allErrs, field.Invalid(fldChildrenNamespacesPath, name,
-				fmt.Sprintf("failed to get child namespace '%s', for %s", name, err)))
+			if !errors.IsNotFound(err) {
+				allErrs = append(allErrs, field.Invalid(fldChildrenNamespacesPath, name,
+					fmt.Sprintf("failed to get child namespace '%s', for %s", name, err)))
+			}
 			continue
 		}
 

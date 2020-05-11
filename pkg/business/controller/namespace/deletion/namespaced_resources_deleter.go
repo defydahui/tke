@@ -310,6 +310,9 @@ func deleteNamespaceFromCluster(deleter *namespacedResourcesDeleter, namespace *
 	kubeClient, err := platformutil.BuildExternalClientSetWithName(deleter.platformClient, namespace.Spec.ClusterName)
 	if err != nil {
 		log.Error("Failed to create the kubernetes client", log.String("namespaceName", namespace.ObjectMeta.Name), log.String("clusterName", namespace.Spec.ClusterName), log.Err(err))
+		if errors.IsNotFound(err) {
+			return nil
+		}
 		return err
 	}
 	// ResourceQuota has also gone with namespace.
