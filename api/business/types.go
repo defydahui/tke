@@ -189,13 +189,14 @@ type NamespaceList struct {
 type NamespaceSpec struct {
 	// Finalizers is an opaque list of values that must be empty to permanently remove object from storage.
 	// +optional
-	Finalizers         []FinalizerName
-	TenantID           string
-	ClusterName        string
-	ClusterType        string
-	ClusterVersion     string
-	ClusterDisplayName string
-	Namespace          string
+	Finalizers           []FinalizerName
+	TenantID             string
+	ClusterName          string
+	ClusterType          string
+	ClusterVersion       string
+	ClusterDisplayName   string
+	CertificateAvailable bool
+	Namespace            string
 	// Hard represents the total resources of a namespace.
 	// +optional
 	Hard ResourceList

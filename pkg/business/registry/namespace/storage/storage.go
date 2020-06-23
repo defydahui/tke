@@ -360,6 +360,7 @@ func (r *REST) patchNamespace(ctx context.Context, obj runtime.Object, cache map
 	ns.Spec.ClusterType = cls.Spec.Type
 	ns.Spec.ClusterVersion = cls.Status.Version
 	ns.Spec.ClusterDisplayName = cls.Spec.DisplayName
+	ns.Spec.CertificateAvailable = true
 	return nil
 }
 
