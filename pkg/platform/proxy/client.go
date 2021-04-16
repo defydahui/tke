@@ -56,8 +56,7 @@ func makeClientKey(username string, groups []string) string {
 	return fmt.Sprintf("%s###%v", username, groups)
 }
 
-func ClientSet(ctx context.Context, platformClient platforminternalclient.PlatformInterface) (*kubernetes.Clientset,
-	error) {
+func GetConfig(ctx context.Context, platformClient platforminternalclient.PlatformInterface) (*rest.Config, error) {
 	clusterName := filter.ClusterFrom(ctx)
 	if clusterName == "" {
 		return nil, errors.NewBadRequest("clusterName is required")
@@ -99,7 +98,16 @@ func ClientSet(ctx context.Context, platformClient platforminternalclient.Platfo
 		}
 	}
 
-	return kubernetes.NewForConfig(config)
+	return config, nil
+}
+
+func ClientSet(ctx context.Context, platformClient platforminternalclient.PlatformInterface) (*kubernetes.Clientset,
+	error) {
+	if config, err := GetConfig(ctx, platformClient); err != nil {
+		return nil, err
+	} else {
+		return kubernetes.NewForConfig(config)
+	}
 }
 
 func getOrCreateClientCert(ctx context.Context, credential *platform.ClusterCredential) ([]byte, []byte, error) {

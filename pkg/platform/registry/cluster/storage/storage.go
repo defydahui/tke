@@ -161,8 +161,9 @@ func NewStorage(optsGetter genericregistry.RESTOptionsGetter, platformClient pla
 			platformClient: platformClient,
 		},
 		Proxy: &ProxyREST{
-			store: store,
-			host:  host,
+			store:          store,
+			host:           host,
+			platformClient: platformClient,
 		},
 	}
 }
